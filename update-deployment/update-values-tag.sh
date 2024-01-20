@@ -24,10 +24,7 @@ if [ ! -f "$yaml_file" ]; then
     exit 1
 fi
 
-# The new tag
-new_tag="${RELEASE_REF}"
-
 # Update the file
-sed -i '' "s/tag:.*/tag: \"$new_tag\"/" $yaml_file
+yq e ".deployment.registry.image.tag = \"${RELEASE_REF}\"" -i values_tag.yaml
 
 cat $yaml_file
