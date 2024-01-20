@@ -1,0 +1,49 @@
+name: 'Update Deployment Repository'
+description: 'Update all applicable deployment repositories with a new commit hash'
+
+inputs:
+  tag:
+    description: 'The git reference to the release container image, either a tag or a sha'
+    required: true
+  microservice-name:
+    description: 'Name of the microservice which will be deployed'
+    required: true
+  deployment-env:
+    description: 'Name of environment to be updated, valid values are "stg", "prod"'
+    required: true
+  deployment-repo:
+    description: 'Name of the deployment repository to be updated, e.g. med-deployments'
+    required: true
+    default: 'pvr-deployments'
+  deploy-key:
+    description: 'SSH public key as configured in the deployment repository'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Set up action environment
+      shell: bash
+      run: |
+        echo "repo_work_path=${GITHUB_WORKSPACE}/deployment" >> $GITHUB_ENV
+
+    - name: Set up SSH agent
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ inputs.deploy-key }}
+
+    - name: Checkout deployments repo
+      uses: actions/checkout@v4
+      with:
+        repository: ${{ github.repository_owner }}/${{ inputs.deployment-repo }}
+        path: ${{ env.repo_work_path }}
+        ssh-key: ${{ inputs.deploy-key }}
+
+    - name: Modify deployments
+      env:
+        REPO_WORK_PATH: ${{ env.repo_work_path }}
+        MICROSERVICE_NAME: ${{ inputs.microservice-name }}
+        ENVIRONMENT: ${{ inputs.deployment-env }}
+        RELEASE_REF: ${{ inputs.tag }}
+      shell: bash
+      run: $GITHUB_ACTION_PATH/update-values-tag.sh
