@@ -27,4 +27,4 @@ fi
 # Update the file
 yq e ".deployment.registry.image.tag = \"${RELEASE_REF}\"" -i values_tag.yaml
 
-cat $yaml_file
+echo "Updated $yaml_file in $environment_dir"
