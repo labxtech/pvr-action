@@ -52,3 +52,12 @@ runs:
         RELEASE_REF: ${{ inputs.tag }}
       shell: bash
       run: $GITHUB_ACTION_PATH/update-values-tag.sh
+
+    - name: Push changes to deployments repo
+      env:
+        REPO_WORK_PATH: ${{ env.repo_work_path }}
+        MICROSERVICE_NAME: ${{ inputs.microservice-name }}
+        ENVIRONMENT: ${{ inputs.deployment-env }}
+        RELEASE_REF: ${{ inputs.tag }}
+      shell: bash
+      run: $GITHUB_ACTION_PATH/push-changes.sh
