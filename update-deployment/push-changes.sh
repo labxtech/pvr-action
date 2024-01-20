@@ -22,4 +22,7 @@ yaml_file="values_tag.yaml"
 git add $yaml_file
 
 # Commit the changes
-git commit -m "Deployment ${RELEASE_REF} for ${REPOSITORY_NAME} on $(TZ='Asia/Dhaka' date)"
+git commit -m "Deployment ${RELEASE_REF} for ${MICROSERVICE_NAME} on $(TZ='Asia/Dhaka' date)"
+
+# Push the changes
+git push origin main
